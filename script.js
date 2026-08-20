@@ -1,40 +1,35 @@
-// ================================================ 
-// script.js — Captura de dados do formulário 
-// Projeto: AgroVenda Digital 
-// Desenvolvedor(a): _____________________________ 
-// ================================================ 
- 
-// PASSO 1: Selecione o botão pelo id definido no HTML 
-const botaoCadastrar = document.getElementById("btnCadastrar"); 
-//                                           	^ preencha com o id correto 
- 
-// PASSO 2: Adicione o ouvinte de evento de clique 
-// Quando o botão for clicado, a função "cadastrar" será chamada 
-botaoCadastrar.addEventListener("click", cadastrar); 
-//                           	^ qual evento detecta um clique? 
- 
-// PASSO 3: Defina a função que será executada 
-function cadastrar() { 
- 
-  // PASSO 4: Capture o valor de cada campo pelo id 
-  const nome  = document.getElementById("nome"). value; 
-  const email = document.getElementById("email"). value; 
-  const senha = document.getElementById("senha"). value; 
-  //                                 	^ id do campo  	^ propriedade que retorna o valor digitado 
- 
-  // PASSO 5: Exiba os dados no console 
-  console.log("=== Dados capturados ==="); 
-  console.log("Nome:", nome); 
-  console.log("E-mail:", email); 
-  console.log("Senha:", senha); 
- 
-  // PASSO 6 (DESAFIO): Valide se algum campo está vazio. 
-  // Se estiver, exiba um alert pedindo para o usuário preencher. 
-  // Dica: use um if e verifique se nome === "" ou email === "" ou senha === "" 
- 
-  // TAREFA: escreva a validação aqui 
- if (nome === "" || email === "" || senha === "") {
-  alert("Por favor, preencha todos os campos!");
-}
- 
-} 
+const botaoCadastrar = document.getElementById('btnCadastrar'); 
+
+// async permite usar await (espera a resposta do servidor) 
+botaoCadastrar.addEventListener("click", async () => { 
+
+  const nome  = document.getElementById('nomeCompleto').value; 
+  const email = document.getElementById('email').value;       // TAREFA: id do campo 
+  const senha = document.getElementById('senha').value;       // TAREFA: id do campo 
+
+  if (!nome || !email || !senha) { 
+	alert('Preencha todos os campos!'); 
+	return; 
+  } 
+
+  try { 
+	// TAREFA: complete a URL com a porta e a rota correta 
+	const resposta = await fetch('http://localhost:3000/cadastrar', { 
+	  method: 'POST',                    // TAREFA: qual método HTTP? 
+	  headers: { "Content-Type": "application/json" }, 
+	  body: JSON.stringify({ nome, email, senha }) 
+	}); 
+
+	const dados = await resposta.json();  // TAREFA: converte resposta em objeto JS 
+
+	if (resposta.ok) { 
+	  alert(`${dados.mensagem} — ID: ${dados.id}`); 
+	} else { 
+	  alert(`Erro: ${dados.erro}`); 
+	} 
+
+  } catch (erro) { 
+	console.error("Erro:", erro); 
+	alert('Servidor indisponível. Verifique se o servidor está rodando.'); 
+  } 
+});
